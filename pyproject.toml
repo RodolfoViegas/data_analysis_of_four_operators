@@ -1,0 +1,17 @@
+[project]
+name = "data_analysis_of_four_operators"
+version = "0.1.0"
+description = "This project made a data analysis of error metric values of four combination (simple mean, median, SVR-stacking and weighted average by feature importance) operators for time series forecasting tasks"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "autorank>=1.2.1",
+    "datasetsforecast>=1.0.0",
+    "jupyter>=1.1.1",
+    "matplotlib>=3.10.1",
+    "mlforecast>=1.0.2",
+    "openpyxl>=3.1.5",
+    "sktime[all-extras]>=0.36.0",
+    "statsforecast>=2.0.1",
+    "xlsxwriter>=3.2.2",
+]
