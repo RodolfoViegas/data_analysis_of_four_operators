@@ -1,5 +1,5 @@
 ---
-title: "Análise de Sensitividade dos combinatores Média, Mediana, SVR-Stack e Média Ponderada por *Features Importance*"
+title: "Análise de Dados dos combinatores Média, Mediana, SVR-Stack e Média Ponderada por *Features Importance*"
 lang: pt
 author: 
   - name: Rodolfo Viegas de Albuquerque
