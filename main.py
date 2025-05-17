@@ -78,7 +78,8 @@ def main() -> None:
             for selected_models in set(combinations(models, num_models)):
                 selected_fitted: pd.DataFrame = all_fitted[list(selected_models)]
                 selected_preds: pd.DataFrame = all_preds[list(selected_models)]
-
+                
+                # The class Combinator creates the all four combination operators
                 combinator: Combinator = Combinator(
                     fitted_values=selected_fitted,
                     y_test=y_test,
@@ -86,11 +87,13 @@ def main() -> None:
                     preds=selected_preds,
                 )
 
+                # Creating Predictions and Fitted Values
                 mean_preds, mean_fitted_values = combinator.mean_method()
                 median_preds, median_fitted_values = combinator.median_method()
                 fi_avg_preds, fi_avg_fitted_values = combinator.fi_avg_method()
                 stack_preds, stack_fitted_values = combinator.svr_stack_method()
 
+                # Concatenation into one vector fitted values + predictions
                 series_data[f"mean_{'_'.join(selected_models)}"] = np.concatenate(
                     [mean_fitted_values, mean_preds]
                 )
@@ -104,6 +107,7 @@ def main() -> None:
                     [stack_fitted_values, stack_preds]
                 )
 
+                # Evaluation on RMSE and SMAPE metrics
                 rmse_mean = compute_rmse(y_test, mean_preds)
                 smape_mean = compute_smape(y_test, mean_preds)
 
@@ -116,6 +120,7 @@ def main() -> None:
                 rmse_stack = compute_rmse(y_test, stack_preds)
                 smape_stack = compute_smape(y_test, stack_preds)
 
+                # Dataset which contains the error values for RMSE metrics
                 rmse_results.append(
                     {
                         "dataset": key,
@@ -127,6 +132,7 @@ def main() -> None:
                     }
                 )
 
+                # Dataset which contains the error values for SMAPE metrics
                 smape_results.append(
                     {
                         "dataset": key,
@@ -137,9 +143,10 @@ def main() -> None:
                         "smape_mode": smape_stack,
                     }
                 )
-
+        # All fitted values + prediction of all kinds of ensembles are save in a excel file
         series_data.to_excel(writer, sheet_name=key, index=False)
 
+    # All error metrics of each combition, i.e., for each operator and combinations from 2 until 9 methods are store into .csv files
     rmse_results_df = pd.DataFrame(rmse_results)
     rmse_results_df.to_csv("model_sensitivity_rmse_results.csv", index=False)
 
@@ -149,7 +156,7 @@ def main() -> None:
     writer.close()
     print("Excel and CSV files saved successfully!")
 
-
+# Metrics
 def compute_rmse(y_true, y_pred):
     return ((y_true - y_pred) ** 2).mean() ** 0.5
 

@@ -16,6 +16,8 @@ format:
         code-fold: true 
         code-tools: true
 jupyter: python3
+filters:
+  - pseudocode
 ---
 
 <style>
@@ -74,6 +76,58 @@ preds.head()
 
 Ao todo foram 30 séries temporais mensais --- período sasonal igual a 12 --- as quais foram usadas na competição de *forecasting* M3. No obstante serem dados bastante conhecidos, usados *benchmarking*, não se sabe seus nomes, mas sim os contextos cujos os dados foram extraídos. São esses: finanças, economia, demografia, indústria e outros.
 
+## Diagrama do sistema de treino e teste
+
+O sistema e cria combinações para cada operador começando com 2 métodos até 9 reunídos, o algoritmo @alg-comb abaixo descreve o processo:
+
+
+
+```pseudocode
+#| label: alg-comb
+#| html-indent-size: "1.2em"
+#| html-comment-delimiter: "//"
+#| html-line-number: true
+#| html-line-number-punc: ":"
+#| html-no-end: false
+#| pdf-placement: "htb!"
+#| pdf-line-number: true
+
+\begin{algorithm}
+		\caption{Combinations}
+		\begin{algorithmic}[1]
+			\For{$i \gets 1$ to $30$}
+			\State $ Predictions \gets Training(Statiscal Models, Y_{train}^{i})$  
+			\State $Predictions \gets Training(ML Models, Y_{train}^{i})$
+			\For{$j \gets 9$ to $2$}
+			\State	$Combinations \gets C_j^{9}$  
+			\State $Operators(Combinations, Predictions)$
+			\EndFor
+			\EndFor
+		\end{algorithmic}
+	\end{algorithm}
+```
+A função *combination* dentro do algoritmo é um combinação para garantir que não haja repetições de *ensembles*, a equação a descreve:
+
+$$
+C_j^{9} = \frac{9!}{j!(9-j)!}
+$$
+
+
+```{mermaid}
+%%| label: fig-diagrama
+%%| fig-cap: Diagrama de Treino
+
+flowchart TD
+  A((Start)) --> B[(Time Series)]
+  B --> C[Training Set]
+  B --> D[Test Set]
+  C --> E[Single Models]
+  E --> F[Combinations]
+  F --> D
+  D --> G[Evaluation]
+  G --> H((End))
+
+```
 
 ## Análise por Agrupamento (Group by)
 ### Agrupamento por série e número de modelos
