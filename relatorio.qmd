@@ -158,34 +158,34 @@ Análise de dados das séries N1402 MICRO, N1411 MICRO, N1501 MICRO, N2401 MACRO
 
 ##### Análise Geral dos *Ensembles* da Série N1402
 
-Abaixo na figura @fig-n1402 a série da categoria micro N1402 com 68 observações, sendo que as 18 últimas são para teste. O gráfico a expõe com divisão para treino e teste.
+Abaixo na figura @fig-n1402-series a série da categoria micro N1402 com 68 observações, sendo que as 18 últimas são para teste. O gráfico a expõe com divisão para treino e teste.
 
 ```{python}
 #| fig-cap: "N1402 MICRO Time Series"
 #| fig-cap-location: bottom
-#| label: fig-n1402
+#| label: fig-n1402-series
 
 m1 = Y_df[Y_df["unique_id"] == 'M1']
 fig, ax = plt.subplots()
-ax.plot(m1.ds[:-18], m1.y[:-18])
-ax.plot(m1.ds[-18:], m1.y[-18:])
+ax.plot(m1.ds[:-18], m1.y[:-18].values, label='Treino')
+ax.plot(m1.ds[-18:], m1.y[-18:].values, label='Teste')
 ax.grid()
 ax.set_facecolor('#E9ECEF')
+ax.legend()
 plt.show()
-
 ```
 
 Em relação a série histórica N1402 é claro o fato de que *ensembles* contribuem para maior acurácia, a partir dois modelos combinados os valores de RMSE e de SMAPE começam a cair. O destaque se dá aos combinadores média simples e média ponderada por *features importance* para as duas métricas que são superiores quando comparados à mediana e ao stacking. A média ponderada --- para ambas métrica --- cai mais rápido que os valores da média simples nos primeiros modelos combinados; quando analisada a métrica RMSE há uma aparente convergência de valores a partir de 6 modelos no *ensemble*, quando há estabilização dos resultados para a média ponderada. Já para a métrica SMAPE não há uma convergência aparente, mas uma correlação muito forte entre os valores, os quais pioram tanto para média aritmética quanto média ponderada na combinação de 9 métodos.
 
 ```{python}
-#| label: tbl-rmse_mean_m1
+#| label: tbl-rmse_mean_n1402
 #| tbl-cap: "Group of average RMSE value for the M1 by number of model on ensemble."
 #| tbl-cap-location: bottom
 rmse_m1 = mean_rmse_series_models.loc['M1',:]
 rmse_m1
 ```
 ```{python}
-#| label: tbl-smape_mean_m1
+#| label: tbl-smape_mean_n1402
 #| tbl-cap: "Group of average SMAPE value for the M1 by number of model on ensemble."
 #| tbl-cap-location: bottom
 smape_m1 = mean_smape_series_models.loc['M1',:]
@@ -197,32 +197,32 @@ Os melhores valores médios de RMSE para média aritmética e média ponderada s
 
 
 ```{python}
-#| label: fig-m1
+#| label: fig-n1402
 #| fig-cap: "Average RMSE and SMAPE values for all combination operators used on N1402 series."
 #| fig-subcap: 
 #|      - "RMSE"
 #|      - "SMAPE"
 fig1, ax1 = plt.subplots()
-ax1.plot(rmse_m1.index, rmse_m1['rmse_mean'].values, label='Avg. RMSE values for Mean')
-ax1.plot(rmse_m1.index, rmse_m1['rmse_median'].values, label='Avg. RMSE values for Median')
-ax1.plot(rmse_m1.index, rmse_m1['rmse_fi_avg'].values, label='Avg. RMSE values for Weighted Average')
-ax1.plot(rmse_m1.index, rmse_m1['rmse_stack_svr'].values, label='Avg. RMSE values for SVR-Stacking')
+ax1.plot(rmse_m1.index, rmse_m1['rmse_mean'].values, label='Valor Médio do RMSE para Média')
+ax1.plot(rmse_m1.index, rmse_m1['rmse_median'].values, label='Valor Médio do RMSE para Mediana')
+ax1.plot(rmse_m1.index, rmse_m1['rmse_fi_avg'].values, label='Valor Médio do RMSE para Média Ponderada')
+ax1.plot(rmse_m1.index, rmse_m1['rmse_stack_svr'].values, label='Valor Médio do RMSE para SVR-Stacking')
 ax1.grid()
 ax1.set_facecolor('#E9ECEF')
-ax1.set_xlabel('Number of Models in Ensemble')
-ax1.set_ylabel('RMSE Value')
+ax1.set_xlabel('Número de Modelos Combinados')
+ax1.set_ylabel('Valor RMSE')
 ax1.legend()
 plt.show()
 
 fig2, ax2 = plt.subplots()
-ax2.plot(smape_m1.index, smape_m1['smape_mean'].values, label='Avg. SMAPE values for Mean')
-ax2.plot(smape_m1.index, smape_m1['smape_median'].values, label='Avg. SMAPE values for Median')
-ax2.plot(smape_m1.index, smape_m1['smape_fi_avg'].values, label='Avg. SMAPE values for Weighted Average')
-ax2.plot(smape_m1.index, smape_m1['smape_stack_svr'].values, label='Avg. RMSE values for SVR-Stacking')
+ax2.plot(smape_m1.index, smape_m1['smape_mean'].values, label='Valor Médio do SMAPE para Média')
+ax2.plot(smape_m1.index, smape_m1['smape_median'].values, label='Valor Médio do SMAPE para Mediana')
+ax2.plot(smape_m1.index, smape_m1['smape_fi_avg'].values, label='Valor Médio do SMAPE para Média Ponderada')
+ax2.plot(smape_m1.index, smape_m1['smape_stack_svr'].values, label='Valor Médio do SMAPE para SVR-Stacking')
 ax2.grid()
 ax2.set_facecolor('#E9ECEF')
-ax2.set_xlabel('Number of Models in Ensemble')
-ax2.set_ylabel('SMAPE Value')
+ax2.set_xlabel('Número de Modelos Combinados')
+ax2.set_ylabel('Valor SMAPE')
 ax2.legend()
 plt.show()
 ```
@@ -233,10 +233,10 @@ Já a técnica de stacking por SVR melhorou a acurácia quando comparada aos mod
 
 ##### Análise dos melhores métodos da série N1402
 
-Quando analisadas individuamente, a melhor combinação para para a série M1 é o STACKING de SVR. O valor de RMSE @tbl-best_model_m1_rmse dessa é 1293,006 e 1438,399 para a média ponderada por *features importance*, a segunda melhor. Usando o cálculo de *percentual improvement* $Percentual Improvement = \frac{Error1 - Error2}{Error1} * 100$, temos que há uma melhoria de -10.108%. Já para a métrica SMAPE @tbl-best_model_m1_smape, o valor para Stack é 50,78 e 53,248 para média aritmética, houve uma melhoria percentual de acurácia de -4,621%.
+Quando analisadas individuamente, a melhor combinação para para a série M1 é o STACKING de SVR. O valor de RMSE @tbl-best_model_n1402_rmse dessa é 1293,006 e 1438,399 para a média ponderada por *features importance*, a segunda melhor. Usando o cálculo de *percentual improvement* $Percentual Improvement = \frac{Error1 - Error2}{Error1} * 100$, temos que há uma melhoria de -10.108%. Já para a métrica SMAPE @tbl-best_model_n1402_smape, o valor para Stack é 50,78 e 53,248 para média aritmética, houve uma melhoria percentual de acurácia de -4,621%.
 
 ```{python}
-#| label: tbl-best_model_m1_rmse
+#| label: tbl-best_model_n1402_rmse
 #| tbl-cap: 'The Best models for M1 series for RMSE metric'
 #| tbl-cap-location: bottom
 mean=rmse[rmse['dataset'] == 'M1'][['models_used','rmse_mean']].sort_values(by='rmse_mean').iloc[0,:].values
@@ -255,7 +255,7 @@ best_models_rmse
 
 
 ```{python}
-#| label: tbl-best_model_m1_smape
+#| label: tbl-best_model_n1402_smape
 #| tbl-cap: 'The Best models for N1402 series for SMAPE metric'
 #| tbl-cap-location: bottom
 mean = smape[smape['dataset'] == 'M1'][['models_used','smape_mean']].sort_values(by='smape_mean').iloc[0,:].values
@@ -277,21 +277,39 @@ best_models_smape
 
 ##### Análise Geral dos *Ensembles* da Série N1411
 
-Na série M10, as combinações obtiveram resultados bons quando considerada a métrica RMSE (@tbl-rmse_mean_m10). Semelhante à série M1, as combinações de média ponderada e média aritmética tiveram, em média, os melhores resultados. A média dos erros mais baixa para média simple é de 758,201 e se deu com 9 modelos combinados; já para a média ponderada, o valor médio do erro mais baixo foi 743,206 e ocorreu com 8 métodos combinados. O operador mediana foi mais acurado que svr-stacking, este manteve-se estável em performance a partir de 3 modelos, ou seja, sem melhorias ou pioras. Já mediana ocilou bastante crescendo e diminuindo o error ao passo que mais modelos foram acrescentados.
+
+Na figura @fig-n1411-series a série MICRO N1411 dividida em dois conjuntos de treino e de teste.
 
 ```{python}
-#| label: tbl-rmse_mean_m10
+#| fig-cap: "N1411 MICRO Time Series"
+#| fig-cap-location: bottom
+#| label: fig-n1411-series
+
+m10 = Y_df[Y_df["unique_id"] == 'M10']
+fig, ax = plt.subplots()
+ax.plot(m10.ds[:-18], m10.y[:-18].values, label='Treino')
+ax.plot(m10.ds[-18:], m10.y[-18:].values, label='Teste')
+ax.grid()
+ax.set_facecolor('#E9ECEF')
+ax.legend()
+plt.show()
+```
+
+Na série N1411, as combinações obtiveram resultados bons quando considerada a métrica RMSE (@tbl-rmse_mean_n1411). Semelhante à série N1402, as combinações de média ponderada e média aritmética tiveram, em média, os melhores resultados. A média dos erros mais baixa para média simple é de 758,201 e se deu com 9 modelos combinados; já para a média ponderada, o valor médio do erro mais baixo foi 743,206 e ocorreu com 8 métodos combinados. O operador mediana foi mais acurado que svr-stacking, este manteve-se estável em performance a partir de 3 modelos, ou seja, sem melhorias ou pioras. Já mediana ocilou bastante crescendo e diminuindo o error ao passo que mais modelos foram acrescentados.
+
+```{python}
+#| label: tbl-rmse_mean_n1411
 #| tbl-cap: "Group of average RMSE value for the N1411 by number of model on ensemble."
 #| tbl-cap-location: bottom
 rmse_m10 = mean_rmse_series_models.loc['M10',:]
 rmse_m10
 ```
 
-Em relação a métrica SMAPE @tbl-smape_mean_m10, o resultado foi muito semelhante à merica RMSE. Média aritmética e média ponderada obtiveram melhores resultados quanto mais modelos são acrescentados à combinação. A média ponderada for *features importances* conseguiu o melhor resultados médio com 8 métodos obtendo 14,35 de SMAPE médio, mas e voltou a crescer quando um modelo é adicionado. 
+Em relação a métrica SMAPE @tbl-smape_mean_n1411, o resultado foi muito semelhante à merica RMSE. Média aritmética e média ponderada obtiveram melhores resultados quanto mais modelos são acrescentados à combinação. A média ponderada for *features importances* conseguiu o melhor resultados médio com 8 métodos obtendo 14,35 de SMAPE médio, mas e voltou a crescer quando um modelo é adicionado. 
 A média simples descresce o erro SMAPE médio quanto mais modelos são acrescentados, tendo seu erro médio mais baixo com  nove métodos combinados. Os valores médios de SMAPE para svr-stacking também permaneceram estáveis ao número de 3 métodos e a mediana novamente com muita ocialação, mas conseguindo escore mais acurado quando comparada ao svr-stacking.
 
 ```{python}
-#| label: tbl-smape_mean_m10
+#| label: tbl-smape_mean_n1411
 #| tbl-cap: "Group of average SMAPE value for the N1411 by number of model on ensemble."
 #| tbl-cap-location: bottom
 smape_m10 = mean_smape_series_models.loc['M10',:]
@@ -299,32 +317,32 @@ smape_m10
 ```
 
 ```{python}
-#| label: fig-m10
+#| label: fig-n1411
 #| fig-cap: "Average RMSE and SMAPE values for all combination operators used on N1411 series."
 #| fig-subcap: 
 #|      - "RMSE"
 #|      - "SMAPE"
 fig1, ax1 = plt.subplots()
-ax1.plot(rmse_m10.index, rmse_m10['rmse_mean'].values, label='Avg. RMSE values for Mean')
-ax1.plot(rmse_m10.index, rmse_m10['rmse_median'].values, label='Avg. RMSE values for Median')
-ax1.plot(rmse_m10.index, rmse_m10['rmse_fi_avg'].values, label='Avg. RMSE values for Weighted Average')
-ax1.plot(rmse_m10.index, rmse_m10['rmse_stack_svr'].values, label='Avg. RMSE values for Stacking')
+ax1.plot(rmse_m10.index, rmse_m10['rmse_mean'].values, label='Valor Médio do RMSE para Média ')
+ax1.plot(rmse_m10.index, rmse_m10['rmse_median'].values, label='Valor Médio do RMSE para Mediana')
+ax1.plot(rmse_m10.index, rmse_m10['rmse_fi_avg'].values, label='Valor Médio do RMSE para Média Ponderada')
+ax1.plot(rmse_m10.index, rmse_m10['rmse_stack_svr'].values, label='Valor Médio do RMSE para SVR-Stacking')
 ax1.grid()
 ax1.set_facecolor('#E9ECEF')
-ax1.set_xlabel('Number of Models in Ensemble')
-ax1.set_ylabel('RMSE Value')
+ax1.set_xlabel('Número de Modelos Combinados')
+ax1.set_ylabel('Valor RMSE')
 ax1.legend()
 plt.show()
 
 fig2, ax2 = plt.subplots()
-ax2.plot(smape_m10.index, smape_m10['smape_mean'].values, label='Avg. SMAPE values for Mean')
-ax2.plot(smape_m10.index, smape_m10['smape_median'].values, label='Avg. SMAPE values for Median')
-ax2.plot(smape_m10.index, smape_m10['smape_fi_avg'].values, label='Avg. RMSE values for Weighted Average')
-ax2.plot(smape_m10.index, smape_m10['smape_stack_svr'].values, label='Avg. RMSE values for Stacking')
+ax2.plot(smape_m10.index, smape_m10['smape_mean'].values, label='Valor Médio do SMAPE para Média')
+ax2.plot(smape_m10.index, smape_m10['smape_median'].values, label='Valor Médio do SMAPE para Mediana')
+ax2.plot(smape_m10.index, smape_m10['smape_fi_avg'].values, label='Valor Médio do SMAPE para Média Ponderada')
+ax2.plot(smape_m10.index, smape_m10['smape_stack_svr'].values, label='Valor Médio do SMAPE para SVR-Stacking')
 ax2.grid()
 ax2.set_facecolor('#E9ECEF')
-ax2.set_xlabel('Number of Models in Ensemble')
-ax2.set_ylabel('SMAPE Value')
+ax2.set_xlabel('Número de Modelos Combinados')
+ax2.set_ylabel('Valor SMAPE')
 ax2.legend()
 plt.show()
 ```
@@ -334,7 +352,7 @@ plt.show()
 O melhor modelos dentre todos os individuais e todas as combinações foi o Random Forest, a exceção do combinador média ponderada por *features importance* na métrica RMSE, em todos os outros cenários quando comparado aos outras combinações o Random Forest sai-se melhor, tanto quando avalidado por RMSE quanto por SMAPE. É-se preciso destacar que tal modelos é um ensemble, porém uma forma homogência, *i.e.*, são várias árvores de decisão que o compõem.
 
 ```{python}
-#| label: tbl-best_model_m10_rmse
+#| label: tbl-best_model_n1411_rmse
 #| tbl-cap: 'The Best models for N1411 series for RMSE metric'
 #| tbl-cap-location: bottom
 mean=rmse[rmse['dataset'] == 'M10'][['models_used','rmse_mean']].sort_values(by='rmse_mean').iloc[0,:].values
@@ -351,7 +369,7 @@ pd.DataFrame({"Mean":mean, "Median":median,"FI weigthed AVG":fi_avg, "Stack SVR"
 ```
 
 ```{python}
-#| label: tbl-best_model_m10_smape
+#| label: tbl-best_model_n1411_smape
 #| tbl-cap: 'The Best models for M10 series for SMAPE metric'
 #| tbl-cap-location: bottom
 mean = smape[smape['dataset'] == 'M10'][['models_used','smape_mean']].sort_values(by='smape_mean').iloc[0,:].values
@@ -372,12 +390,30 @@ pd.DataFrame({"Mean":mean, "Median":median,"FI weigthed AVG":fi_avg, "Stack SVR"
 
 ##### Análise Geral dos *Ensembles* da Série N1501
 
-Para ambas as métricas @tbl-rmse_mean_m100 e @tbl-smape_mean_m100, o destaque se deu ao mal desepenho do operador SVR-Stack. Em média, o valor RMSE e SMAPE piorou drasticamente já na primeira combinação com dois métodos indicando um possível *overfitting*; a partir de três métodos há uma estabilidade de do erro. A média dos valores RMSE dos modelos individuais é 619.75, já o valor RMSE médio do SVR-Stack com dois modelos usados é 1415.82, houve uma piora de 56.226%. Para para SMAPE, o valor médio modelos individuais é 9.52 e do SVR-Stack com dois métodos de 21.9, a piora foi de 56.53%. 
-
-Os graficos @fig-m100-rmse e @fig-m100-rmse ilustram a piora no operator. Para ambas métricas os gráficos são utilizados em escala logarítmica, no entato, dada a magnitude da média dos valores de error, ainda assim não é possível haver uma visualização clara das tendência. Sendo, então, necessária a retirada da projeção de erros do operador SVR-Stacking com o intuitito de exibir as curvas de média de erros dos demais operadores.
+A figura @fig-n1501-series mostra a série MICRO N1501 dividas em treino e teste
 
 ```{python}
-#| label: tbl-rmse_mean_m100
+#| fig-cap: "N1501 MICRO Time Series"
+#| fig-cap-location: bottom
+#| label: fig-n1501-series
+
+m100 = Y_df[Y_df["unique_id"] == 'M100']
+fig, ax = plt.subplots()
+ax.plot(m100.ds[:-18], m100.y[:-18].values, label='Treino')
+ax.plot(m100.ds[-18:], m100.y[-18:].values, label='Teste')
+ax.grid()
+ax.set_facecolor('#E9ECEF')
+ax.legend()
+plt.show()
+```
+
+
+Para ambas as métricas @tbl-rmse_mean_n1501 e @tbl-smape_mean_n1501, o destaque se deu ao mal desepenho do operador SVR-Stack. Em média, o valor RMSE e SMAPE piorou drasticamente já na primeira combinação com dois métodos indicando um possível *overfitting*; a partir de três métodos há uma estabilidade de do erro. A média dos valores RMSE dos modelos individuais é 619.75, já o valor RMSE médio do SVR-Stack com dois modelos usados é 1415.82, houve uma piora de 56.226%. Para para SMAPE, o valor médio modelos individuais é 9.52 e do SVR-Stack com dois métodos de 21.9, a piora foi de 56.53%. 
+
+Os graficos @fig-n1501-rmse e @fig-n1501-rmse ilustram a piora no operator. Para ambas métricas os gráficos são utilizados em escala logarítmica, no entato, dada a magnitude da média dos valores de error, ainda assim não é possível haver uma visualização clara das tendência. Sendo, então, necessária a retirada da projeção de erros do operador SVR-Stacking com o intuitito de exibir as curvas de média de erros dos demais operadores.
+
+```{python}
+#| label: tbl-rmse_mean_n1501
 #| tbl-cap: "Group of average RMSE value for the N1501 by number of model on ensemble."
 #| tbl-cap-location: bottom
 rmse_m100 = mean_rmse_series_models.loc['M100',:]
@@ -389,7 +425,7 @@ Semelhante às outras séries, os resultados de média simples e média ponderad
 Com relação à média simples, houve melhora contínua ao passo que mais modelos são acrescendados. Nota-se também que há uma lacuna acentuada entre as curvas, diferentemente das séries analisadas, indicando que a média ponderada conseguiu atriuir pesos significados aos métodos e consequentemente mais poder preditivo aos *ensembles*. 
 
 ```{python}
-#| label: tbl-smape_mean_m100
+#| label: tbl-smape_mean_n1501
 #| tbl-cap: "Group of average SMAPE value for the N1501 by number of model on ensemble."
 #| tbl-cap-location: bottom
 smape_m100 = mean_smape_series_models.loc['M100',:]
@@ -398,7 +434,7 @@ smape_m100
 
 
 ```{python}
-#| label: fig-m100-rmse
+#| label: fig-n1501-rmse
 #| fig-cap: "Average RMSE values for all combination operators used on N1501 series."
 #| fig-subcap:
 #|   - "With SVR-Stacking"
@@ -407,42 +443,27 @@ smape_m100
 #| layout-nrow: 2
 #| fig-align: center
 
-#"[[1,1], [1]]" - "With SVR-Stacking (Log Scale)"
-cm = 1/2.54
-fig, ax = plt.subplots(ncols=2, figsize=(15, 5))
-ax[0].plot(rmse_m100.index, rmse_m100['rmse_mean'].values, label='Avg. RMSE values for Mean')
-ax[0].plot(rmse_m100.index, rmse_m100['rmse_median'].values, label='Avg. RMSE values for Median')
-ax[0].plot(rmse_m100.index, rmse_m100['rmse_fi_avg'].values, label='Avg. RMSE values for Weighted Average')
-ax[0].plot(rmse_m100.index, rmse_m100['rmse_stack_svr'].values, label='Avg. RMSE values for SVR-Stacking')
-ax[0].grid()
-ax[0].set_facecolor('#E9ECEF')
-ax[0].set_xlabel('Number of Models in Ensemble')
-ax[0].set_ylabel('RMSE Value')
-ax[0].legend()
-#ax[0].set_title("With SVR-Stacking")
 
-#fig1, ax1 = plt.subplots()
-ax[1].set_yscale('log')
-ax[1].plot(rmse_m100.index, rmse_m100['rmse_mean'].values, label='Avg. RMSE values for Mean')
-ax[1].plot(rmse_m100.index, rmse_m100['rmse_median'].values, label='Avg. RMSE values for Median')
-ax[1].plot(rmse_m100.index, rmse_m100['rmse_fi_avg'].values, label='Avg. RMSE values for Weighted Average')
-ax[1].plot(rmse_m100.index, rmse_m100['rmse_stack_svr'].values, label='Avg. RMSE values for SVR-Stacking')
-ax[1].grid()
-ax[1].set_facecolor('#E9ECEF')
-ax[1].set_xlabel('Number of Models in Ensemble')
-ax[1].set_ylabel('RMSE Value (log scale)')
-ax[1].legend()
-plt.show()
+fig, ax = plt.subplots()
+ax.plot(rmse_m100.index, rmse_m100['rmse_mean'].values, label='Valor Médio do RMSE para Média')
+ax.plot(rmse_m100.index, rmse_m100['rmse_median'].values, label='Valor Médio do RMSE para Mediana')
+ax.plot(rmse_m100.index, rmse_m100['rmse_fi_avg'].values, label='Valor Médio do RMSE para Média Ponderada')
+ax.plot(rmse_m100.index, rmse_m100['rmse_stack_svr'].values, label='Valor Médio do RMSE para SVR-Stacking')
+ax.grid()
+ax.set_facecolor('#E9ECEF')
+ax.set_xlabel('Número de Modelos Combinados')
+ax.set_ylabel('Valor RMSE')
+ax.legend()
 
 
 fig2, ax2 = plt.subplots()
-ax2.plot(rmse_m100.index, rmse_m100['rmse_mean'].values, label='Avg. RMSE values for Mean',color='blue')
-ax2.plot(rmse_m100.index, rmse_m100['rmse_median'].values, label='Avg. RMSE values for Median', color='lightcoral')
-ax2.plot(rmse_m100.index, rmse_m100['rmse_fi_avg'].values, label='Avg. RMSE values for Weighted Average', color='yellowgreen')
+ax2.plot(rmse_m100.index, rmse_m100['rmse_mean'].values, label='Valor Médio do RMSE para Média',color='blue')
+ax2.plot(rmse_m100.index, rmse_m100['rmse_median'].values, label='Valor Médio do RMSE para Mediana', color='lightcoral')
+ax2.plot(rmse_m100.index, rmse_m100['rmse_fi_avg'].values, label='Valor Médio do RMSE para Média Ponderada', color='yellowgreen')
 ax2.grid()
 ax2.set_facecolor('#E9ECEF')
-ax2.set_xlabel('Number of Models in Ensemble')
-ax2.set_ylabel('RMSE Value')
+ax2.set_xlabel('Número de Modelos Combinados')
+ax2.set_ylabel('Valor RMSE')
 ax2.legend()
 plt.show()
 #ax[1].set_title("Without SVR-Stacking")
@@ -451,50 +472,38 @@ plt.show()
 O operador mediana conseguiu resultados mais acuradas em ambas métricas quando comparados aos modelos individuais, houve ocilação ao passo que mais métodos são adicionados, mas com a clara tendência de queda, com os melhores valores médios para RMSE e SMAPE com *ensemble* de 8 modelos: RMSE igual a 596,75 e SMAPE igual a 9,20.
 
 ```{python}
-#| label: fig-m100-smape
+#| label: fig-n1501-smape
 #| fig-cap: "Average SMAPE values for all combination operators used on M100 series."
 #| fig-subcap:
 #|   - "With SVR-Stacking"
 #|   - "With SVR-Stacking (Log Scale)"
 #|   - "Without SVR-Stacking"
 #| column: page
-#| layout: "[[1,1], [1]]"
+#| layout-nrows: 2
 #| fig-align: center
 
 fig, ax = plt.subplots()
-ax.plot(smape_m100.index, smape_m100['smape_mean'].values, label='Avg. SMAPE values for Mean',color='blue')
-ax.plot(smape_m100.index, smape_m100['smape_median'].values, label='Avg. SMAPE values for Median', color='lightcoral')
-ax.plot(smape_m100.index, smape_m100['smape_fi_avg'].values, label='Avg. SMAPE values for Weighted Average', color='yellowgreen')
-ax.plot(smape_m100.index, smape_m100['smape_stack_svr'].values, label='Avg. RMSE values for SVR-Stacking', color='mediumvioletred')
+ax.plot(smape_m100.index, smape_m100['smape_mean'].values, label='Valor Médio do SMAPE para Média',color='blue')
+ax.plot(smape_m100.index, smape_m100['smape_median'].values, label='Valor Médio do SMAPE para Mediana', color='lightcoral')
+ax.plot(smape_m100.index, smape_m100['smape_fi_avg'].values, label='Valor Médio do SMAPE para Média Ponderada', color='yellowgreen')
+ax.plot(smape_m100.index, smape_m100['smape_stack_svr'].values, label='Valor Médio do SMAPE para SVR-Stacking', color='mediumvioletred')
 ax.grid()
 ax.set_facecolor('#E9ECEF')
-ax.set_xlabel('Number of Models in Ensemble')
-ax.set_ylabel('SMAPE Value')
+ax.set_xlabel('Número de Modelos Combinados')
+ax.set_ylabel('Valor SMAPE')
 ax.legend()
 plt.show()
 
-fig1, ax1 = plt.subplots()
-ax1.set_yscale('log')
-ax1.plot(smape_m100.index, smape_m100['smape_mean'].values, label='Avg. SMAPE values for Mean',color='blue')
-ax1.plot(smape_m100.index, smape_m100['smape_median'].values, label='Avg. SMAPE values for Median', color='lightcoral')
-ax1.plot(smape_m100.index, smape_m100['smape_fi_avg'].values, label='Avg. SMAPE values for Weighted Average', color='yellowgreen')
-ax1.plot(smape_m100.index, smape_m100['smape_stack_svr'].values, label='Avg. RMSE values for SVR-Stacking', color='mediumvioletred')
-ax1.grid()
-ax1.set_facecolor('#E9ECEF')
-ax1.set_xlabel('Number of Models in Ensemble')
-ax1.set_ylabel('SMAPE Value')
-ax1.legend()
-plt.show()
 
 # sem stack
 fig2, ax2 = plt.subplots()
-ax2.plot(smape_m100.index, smape_m100['smape_mean'].values, label='Avg. SMAPE values for Mean', color='blue')
-ax2.plot(smape_m100.index, smape_m100['smape_median'].values, label='Avg. SMAPE values for Median', color='lightcoral')
-ax2.plot(smape_m100.index, smape_m100['smape_fi_avg'].values, label='Avg. SMAPE values for Weighted Average', color='yellowgreen')
+ax2.plot(smape_m100.index, smape_m100['smape_mean'].values, label='Valor Médio do SMAPE para Média', color='blue')
+ax2.plot(smape_m100.index, smape_m100['smape_median'].values, label='Valor Médio do SMAPE para Mediana', color='lightcoral')
+ax2.plot(smape_m100.index, smape_m100['smape_fi_avg'].values, label='Valor Médio do SMAPE para Média Ponderada', color='yellowgreen')
 ax2.grid()
 ax2.set_facecolor('#E9ECEF')
-ax2.set_xlabel('Number of Models in Ensemble')
-ax2.set_ylabel('SMAPE Value')
+ax2.set_xlabel('Número de Modelos Combinados')
+ax2.set_ylabel('Valor SMAPE')
 ax2.legend()
 plt.show()
 ```
@@ -504,7 +513,7 @@ plt.show()
 Em relação aos melhores métodos para a série N1501, para a métrica RMSE o melhor *ensemble* foi a mediana de KNN-SVR-TBATS com um resultado de 556.46. O resultado melhor para SMAPE foi de 8,18 novamente usando o combinador mediana, mas com os métodos KNN-SVR-ARIMA.
 
 ```{python}
-#| label: tbl-best_model_m100_rmse
+#| label: tbl-best_model_n1501_rmse
 #| tbl-cap: 'The Best models for N1501 series for RMSE metric'
 #| tbl-cap-location: bottom
 mean=rmse[rmse['dataset'] == 'M100'][['models_used','rmse_mean']].sort_values(by='rmse_mean').iloc[0,:].values
@@ -523,7 +532,7 @@ best_models_rmse
 
 
 ```{python}
-#| label: tbl-best_model_m100_smape
+#| label: tbl-best_model_n1501_smape
 #| tbl-cap: 'The Best models for N1501 series for SMAPE metric'
 #| tbl-cap-location: bottom
 mean = smape[smape['dataset'] == 'M100'][['models_used','smape_mean']].sort_values(by='smape_mean').iloc[0,:].values
@@ -544,12 +553,30 @@ best_models_smape
 
 ##### Análise Geral dos *Ensembles* da Série N2401
 
+
+Divisão da séries N2401 em conjuntos de treino e de teste representado em @fig-n2401-series
+
+```{python}
+#| fig-cap: "N2401 MACRO Time Series"
+#| fig-cap-location: bottom
+#| label: fig-n2401-series
+
+m1000 = Y_df[Y_df["unique_id"] == 'M1000']
+fig, ax = plt.subplots()
+ax.plot(m1000.ds[:-18], m1000.y[:-18].values, label='Treino')
+ax.plot(m1000.ds[-18:], m1000.y[-18:].values, label='Teste')
+ax.grid()
+ax.set_facecolor('#E9ECEF')
+ax.legend()
+plt.show()
+```
+
 Os operadores média aritmética e média ponderada obtiveram resultados médios satisfatórios considerando que esses foram mais acurados que a média dos modelos individuais, tando quando considerada a métrica RMSE quanto SMAPE. A média simples baixou o erro RMSE até 4 métodos no *ensemble*, mas o valor médio do erro RMSE permaneceu estável aos acrescimos de métodos, ficando de 56,847 para 4 modelos até 56,29 para 9 modelos. Já para o valor médio SMAPE da média simples conseguiu evoluir quando comparada aos modelos individuais, mas de forma mais modesta estabilizando a queda do erro em 7 métodos. 
 
 A média ponderada conseguiu minimizar a média do valor de RMSE conforme mais métodos foram adicionados, tendo seu valor médio de RMSE com 9 métodos combinados no valor de 45,27, o que foi um ganho de redução de erro de 26.34%. A média ponderada também obteve desenpenho satisfatório na métrica SMAPE, seu melhor resultado foi 0.86 usando, novamente, 9 modelos em *ensemble*, tal resultados respresentou uma acrescimento percentual de 24,42%.
 
 ```{python}
-#| label: tbl-rmse_mean_m1000
+#| label: tbl-rmse_mean_n2401
 #| tbl-cap: "Group of average RMSE value for the N2401 by number of model on ensemble."
 #| tbl-cap-location: bottom
 rmse_m1000 = mean_rmse_series_models.loc['M1000',:]
@@ -557,7 +584,7 @@ rmse_m1000
 ```
 
 ```{python}
-#| label: tbl-smape_mean_m1000
+#| label: tbl-smape_mean_n2401
 #| tbl-cap: "Group of average SMAPE value for the N2401 by number of model on ensemble."
 #| tbl-cap-location: bottom
 smape_m1000 = mean_smape_series_models.loc['M1000',:]
@@ -565,7 +592,7 @@ smape_m1000
 ```
 
 ```{python}
-#| label: fig-m1000-rmse
+#| label: fig-n2401-rmse
 #| fig-cap: "Average RMSE values for all combination operators used on N2401 series."
 #| fig-subcap:
 #|   - "With SVR-Stacking"
@@ -574,32 +601,32 @@ smape_m1000
 #| column: page
 
 fig, ax = plt.subplots()
-ax.plot(rmse_m1000.index, rmse_m1000['rmse_mean'].values, label='Avg. RMSE values for Mean')
-ax.plot(rmse_m1000.index, rmse_m1000['rmse_median'].values, label='Avg. RMSE values for Median')
-ax.plot(rmse_m1000.index, rmse_m1000['rmse_fi_avg'].values, label='Avg. RMSE values for Weighted Average')
-ax.plot(rmse_m1000.index, rmse_m1000['rmse_stack_svr'].values, label='Avg. RMSE values for SVR-Stacking')
+ax.plot(rmse_m1000.index, rmse_m1000['rmse_mean'].values, label='Valor Médio do RMSE para Média ')
+ax.plot(rmse_m1000.index, rmse_m1000['rmse_median'].values, label='Valor Médio do RMSE para Mediana')
+ax.plot(rmse_m1000.index, rmse_m1000['rmse_fi_avg'].values, label='Valor Médio do RMSE para Média Ponderada')
+ax.plot(rmse_m1000.index, rmse_m1000['rmse_stack_svr'].values, label='Valor Médio do RMSE para SVR-Stacking')
 ax.grid()
 ax.set_facecolor('#E9ECEF')
-ax.set_xlabel('Number of Models in Ensemble')
-ax.set_ylabel('RMSE Value')
+ax.set_xlabel('Número de Modelos Combinados')
+ax.set_ylabel('Valor RMSE')
 ax.legend()
 plt.show()
 
 fig1, ax1 = plt.subplots()
-ax1.plot(rmse_m1000.index, rmse_m1000['rmse_mean'].values, label='Avg. RMSE values for Mean')
-ax1.plot(rmse_m1000.index, rmse_m1000['rmse_median'].values, label='Avg. RMSE values for Median')
-ax1.plot(rmse_m1000.index, rmse_m1000['rmse_fi_avg'].values, label='Avg. RMSE values for Weighted Average')
+ax1.plot(rmse_m1000.index, rmse_m1000['rmse_mean'].values, label='Valor Médio do RMSE para Média ')
+ax1.plot(rmse_m1000.index, rmse_m1000['rmse_median'].values, label='Valor Médio do RMSE para Mediana')
+ax1.plot(rmse_m1000.index, rmse_m1000['rmse_fi_avg'].values, label='Valor Médio do RMSE para Média Ponderada')
 ax1.grid()
 ax1.set_facecolor('#E9ECEF')
-ax1.set_xlabel('Number of Models in Ensemble')
-ax1.set_ylabel('RMSE Value')
+ax1.set_xlabel('Número de Modelos Combinados')
+ax1.set_ylabel('Valor RMSE')
 ax1.legend()
 plt.show()
 ```
 
 
 ```{python}
-#| label: fig-m1000-smape
+#| label: fig-n2401-smape
 #| fig-cap: "Average SMAPE values for all combination operators used on N2401 series."
 #| fig-subcap:
 #|   - "With SVR-Stacking"
@@ -608,25 +635,25 @@ plt.show()
 #| column: page
 
 fig, ax = plt.subplots()
-ax.plot(smape_m1000.index, smape_m1000['smape_mean'].values, label='Avg. SMAPE values for Mean')
-ax.plot(smape_m1000.index, smape_m1000['smape_median'].values, label='Avg. SMAPE values for Median')
-ax.plot(smape_m1000.index, smape_m1000['smape_fi_avg'].values, label='Avg. SMAPE values for Weighted Average')
-ax.plot(smape_m1000.index, smape_m1000['smape_stack_svr'].values, label='Avg. SMAPE values for SVR-Stacking')
+ax.plot(smape_m1000.index, smape_m1000['smape_mean'].values, label='Valor Médio do SMAPE para Média')
+ax.plot(smape_m1000.index, smape_m1000['smape_median'].values, label='Valor Médio do SMAPE para Mediana')
+ax.plot(smape_m1000.index, smape_m1000['smape_fi_avg'].values, label='Valor Médio do SMAPE para Média Ponderada')
+ax.plot(smape_m1000.index, smape_m1000['smape_stack_svr'].values, label='Valor Médio do SMAPE para SVR-Stacking')
 ax.grid()
 ax.set_facecolor('#E9ECEF')
-ax.set_xlabel('Number of Models in Ensemble')
-ax.set_ylabel('SMAPE Value')
+ax.set_xlabel('Número de Modelos Combinados')
+ax.set_ylabel('Valor SMAPE')
 ax.legend()
 plt.show()
 
 fig1, ax1 = plt.subplots()
-ax1.plot(smape_m1000.index, smape_m1000['smape_mean'].values, label='Avg. SMAPE values for Mean')
-ax1.plot(smape_m1000.index, smape_m1000['smape_median'].values, label='Avg. SMAPE values for Median')
-ax1.plot(smape_m1000.index, smape_m1000['smape_fi_avg'].values, label='Avg. SMAPE values for Weighted Average')
+ax1.plot(smape_m1000.index, smape_m1000['smape_mean'].values, label='Valor Médio do SMAPE para Média')
+ax1.plot(smape_m1000.index, smape_m1000['smape_median'].values, label='Valor Médio do SMAPE para Mediana')
+ax1.plot(smape_m1000.index, smape_m1000['smape_fi_avg'].values, label='Valor Médio do SMAPE para Média Ponderada')
 ax1.grid()
 ax1.set_facecolor('#E9ECEF')
-ax1.set_xlabel('Number of Models in Ensemble')
-ax1.set_ylabel('SMAPE Value')
+ax1.set_xlabel('Número de Modelos Combinados')
+ax1.set_ylabel('Valor SMAPE')
 ax1.legend()
 plt.show()
 ```
@@ -643,7 +670,7 @@ O melhor modelo para as duas métrica foi o SVR. Seu valor de RMSE foi 24,071 e 
 
 
 ```{python}
-#| label: tbl-best_model_m1000_rmse
+#| label: tbl-best_model_n2401_rmse
 #| tbl-cap: 'The Best models for N2401 series for RMSE metric'
 #| tbl-cap-location: bottom
 mean=rmse[rmse['dataset'] == 'M1000'][['models_used','rmse_mean']].sort_values(by='rmse_mean').iloc[0,:].values
@@ -662,7 +689,7 @@ best_models_rmse
 
 
 ```{python}
-#| label: tbl-best_model_m1000_smape
+#| label: tbl-best_model_n2401_smape
 #| tbl-cap: 'The Best models for N2401 series for SMAPE metric'
 #| tbl-cap-location: bottom
 mean = smape[smape['dataset'] == 'M1000'][['models_used','smape_mean']].sort_values(by='smape_mean').iloc[0,:].values
@@ -683,8 +710,27 @@ best_models_smape
 #### N2402
 
 ##### Análise Geral dos *Ensembles* da Série N2402
+
+Divisão em treino e teste da séries MACRO N2402 em @fig-n2402-series
+
 ```{python}
-#| label: tbl-rmse_mean_m1001
+#| fig-cap: "N2402 MACRO Time Series"
+#| fig-cap-location: bottom
+#| label: fig-n2402-series
+
+m1001 = Y_df[Y_df["unique_id"] == 'M1001']
+fig, ax = plt.subplots()
+ax.plot(m1001.ds[:-18], m1001.y[:-18].values, label='Treino')
+ax.plot(m1001.ds[-18:], m1001.y[-18:].values, label='Teste')
+ax.grid()
+ax.set_facecolor('#E9ECEF')
+ax.legend()
+plt.show()
+```
+
+
+```{python}
+#| label: tbl-rmse_mean_n2402
 #| tbl-cap: "Group of average RMSE value for the N2402 by number of model on ensemble."
 #| tbl-cap-location: bottom
 rmse_m1001 = mean_rmse_series_models.loc['M1001',:]
@@ -692,7 +738,7 @@ rmse_m1001
 ```
 
 ```{python}
-#| label: tbl-smape_mean_m1001
+#| label: tbl-smape_mean_n2402
 #| tbl-cap: "Group of average SMAPE value for the N2402 by number of model on ensemble."
 #| tbl-cap-location: bottom
 smape_m1001 = mean_smape_series_models.loc['M1001',:]
@@ -701,7 +747,7 @@ smape_m1001
 
 
 ```{python}
-#| label: fig-m1001-rmse
+#| label: fig-n2402-rmse
 #| fig-cap: "Average RMSE values for all combination operators used on N2402 series."
 #| fig-subcap:
 #|   - "With SVR-Stacking"
@@ -709,25 +755,25 @@ smape_m1001
 #| layout-nrow: 2
 
 fig, ax = plt.subplots()
-ax.plot(rmse_m1001.index, rmse_m1001['rmse_mean'].values, label='Avg. RMSE values for Mean')
-ax.plot(rmse_m1001.index, rmse_m1001['rmse_median'].values, label='Avg. RMSE values for Median')
-ax.plot(rmse_m1001.index, rmse_m1001['rmse_fi_avg'].values, label='Avg. RMSE values for Weighted Average')
-ax.plot(rmse_m1001.index, rmse_m1001['rmse_stack_svr'].values, label='Avg. RMSE values for SVR-Stacking')
+ax.plot(rmse_m1001.index, rmse_m1001['rmse_mean'].values, label='Valor Médio do RMSE para Média ')
+ax.plot(rmse_m1001.index, rmse_m1001['rmse_median'].values, label='Valor Médio do RMSE para Mediana')
+ax.plot(rmse_m1001.index, rmse_m1001['rmse_fi_avg'].values, label='Valor Médio do RMSE para Média Ponderada')
+ax.plot(rmse_m1001.index, rmse_m1001['rmse_stack_svr'].values, label='Valor Médio do RMSE para SVR-Stacking')
 ax.grid()
 ax.set_facecolor('#E9ECEF')
-ax.set_xlabel('Number of Models in Ensemble')
-ax.set_ylabel('RMSE Value')
+ax.set_xlabel('Número de Modelos Combinados')
+ax.set_ylabel('Valor RMSE')
 ax.legend()
 plt.show()
 
 fig1, ax1 = plt.subplots()
-ax1.plot(rmse_m1001.index, rmse_m1001['rmse_mean'].values, label='Avg. RMSE values for Mean')
-ax1.plot(rmse_m1001.index, rmse_m1001['rmse_median'].values, label='Avg. RMSE values for Median')
-ax1.plot(rmse_m1001.index, rmse_m1001['rmse_fi_avg'].values, label='Avg. RMSE values for Weighted Average')
+ax1.plot(rmse_m1001.index, rmse_m1001['rmse_mean'].values, label='Valor Médio do RMSE para Média ')
+ax1.plot(rmse_m1001.index, rmse_m1001['rmse_median'].values, label='Valor Médio do RMSE para Mediana')
+ax1.plot(rmse_m1001.index, rmse_m1001['rmse_fi_avg'].values, label='Valor Médio do RMSE para Média Ponderada')
 ax1.grid()
 ax1.set_facecolor('#E9ECEF')
-ax1.set_xlabel('Number of Models in Ensemble')
-ax1.set_ylabel('RMSE Value')
+ax1.set_xlabel('Número de Modelos Combinados')
+ax1.set_ylabel('Valor RMSE')
 ax1.legend()
 plt.show()
 ```
@@ -739,7 +785,7 @@ Analisando individualmente 5 séries seguidas de período sasonal 12 e por previ
 Os demais combinadores comportaram-se de modo semelhante aos casos anteriores analisados. A média ponderada obtese os melhores resultados, seguida da média simples e da mediana. 
 
 ```{python}
-#| label: fig-m1001-smape
+#| label: fig-n2402-smape
 #| fig-cap: "Average SMAPE values for all combination operators used on N2402 series."
 #| fig-subcap:
 #|   - "With SVR-Stacking"
@@ -747,33 +793,33 @@ Os demais combinadores comportaram-se de modo semelhante aos casos anteriores an
 #| layout-nrow: 2
 
 fig, ax = plt.subplots()
-ax.plot(smape_m1001.index, smape_m1001['smape_mean'].values, label='Avg. SMAPE values for Mean')
-ax.plot(smape_m1001.index, smape_m1001['smape_median'].values, label='Avg. SMAPE values for Median')
-ax.plot(smape_m1001.index, smape_m1001['smape_fi_avg'].values, label='Avg. SMAPE values for Weighted Average')
-ax.plot(smape_m1001.index, smape_m1001['smape_stack_svr'].values, label='Avg. SMAPE values for SVR-Stacking')
+ax.plot(smape_m1001.index, smape_m1001['smape_mean'].values, label='Valor Médio do SMAPE para Média')
+ax.plot(smape_m1001.index, smape_m1001['smape_median'].values, label='Valor Médio do SMAPE para Mediana')
+ax.plot(smape_m1001.index, smape_m1001['smape_fi_avg'].values, label='Valor Médio do SMAPE para Média Ponderada')
+ax.plot(smape_m1001.index, smape_m1001['smape_stack_svr'].values, label='Valor Médio do SMAPE para SVR-Stacking')
 ax.grid()
 ax.set_facecolor('#E9ECEF')
-ax.set_xlabel('Number of Models in Ensemble')
-ax.set_ylabel('SMAPE Value')
+ax.set_xlabel('Número de Modelos Combinados')
+ax.set_ylabel('Valor SMAPE')
 ax.legend()
 plt.show()
 
 fig1, ax1 = plt.subplots()
-ax1.plot(smape_m1001.index, smape_m1001['smape_mean'].values, label='Avg. SMAPE values for Mean')
-ax1.plot(smape_m1001.index, smape_m1001['smape_median'].values, label='Avg. SMAPE values for Median')
-ax1.plot(smape_m1001.index, smape_m1001['smape_fi_avg'].values, label='Avg. SMAPE values for Weighted Average')
+ax1.plot(smape_m1001.index, smape_m1001['smape_mean'].values, label='Valor Médio do SMAPE para Média')
+ax1.plot(smape_m1001.index, smape_m1001['smape_median'].values, label='Valor Médio do SMAPE para Mediana')
+ax1.plot(smape_m1001.index, smape_m1001['smape_fi_avg'].values, label='Valor Médio do SMAPE para Média Ponderada')
 ax1.grid()
 ax1.set_facecolor('#E9ECEF')
-ax1.set_xlabel('Number of Models in Ensemble')
-ax1.set_ylabel('SMAPE Value')
+ax1.set_xlabel('Número de Modelos Combinados')
+ax1.set_ylabel('Valor SMAPE')
 ax1.legend()
 plt.show()
 ```
 
-##### Análise dos melhores métodos da série M1001
+##### Análise dos melhores métodos da série N2402
 
 ```{python}
-#| label: tbl-best_model_m1001_rmse
+#| label: tbl-best_model_n2402_rmse
 #| tbl-cap: 'The Best models for N2402 series for RMSE metric'
 #| tbl-cap-location: bottom
 mean=rmse[rmse['dataset'] == 'M1001'][['models_used','rmse_mean']].sort_values(by='rmse_mean').iloc[0,:].values
@@ -792,7 +838,7 @@ best_models_rmse
 
 
 ```{python}
-#| label: tbl-best_model_m1001_smape
+#| label: tbl-best_model_n2402_smape
 #| tbl-cap: 'The Best models for N2402 series for SMAPE metric'
 #| tbl-cap-location: bottom
 mean = smape[smape['dataset'] == 'M1001'][['models_used','smape_mean']].sort_values(by='smape_mean').iloc[0,:].values
@@ -850,25 +896,25 @@ print(smape_group.round(3).to_latex())
 #| layout-nrow: 2
 
 fig, ax = plt.subplots()
-ax.plot(rmse_group.index, rmse_group['rmse_mean'].values, label='Avg. RMSE values for Mean')
-ax.plot(rmse_group.index, rmse_group['rmse_median'].values, label='Avg. RMSE values for Median')
-ax.plot(rmse_group.index, rmse_group['rmse_fi_avg'].values, label='Avg. RMSE values for Weighted Average')
-ax.plot(rmse_group.index, rmse_group['rmse_stack_svr'].values, label='Avg. RMSE values for SVR-Stacking')
+ax.plot(rmse_group.index, rmse_group['rmse_mean'].values, label='Valor Médio do RMSE para Média ')
+ax.plot(rmse_group.index, rmse_group['rmse_median'].values, label='Valor Médio do RMSE para Mediana')
+ax.plot(rmse_group.index, rmse_group['rmse_fi_avg'].values, label='Valor Médio do RMSE para Média Ponderada')
+ax.plot(rmse_group.index, rmse_group['rmse_stack_svr'].values, label='Valor Médio do RMSE para SVR-Stacking')
 ax.grid()
 ax.set_facecolor('#E9ECEF')
-ax.set_xlabel('Number of Models in Ensemble')
-ax.set_ylabel('RMSE Value')
+ax.set_xlabel('Número de Modelos Combinados')
+ax.set_ylabel('Valor RMSE')
 ax.legend()
 plt.show()
 
 fig1, ax1 = plt.subplots()
-ax1.plot(rmse_group.index, rmse_group['rmse_mean'].values, label='Avg. RMSE values for Mean')
-ax1.plot(rmse_group.index, rmse_group['rmse_median'].values, label='Avg. RMSE values for Median')
-ax1.plot(rmse_group.index, rmse_group['rmse_fi_avg'].values, label='Avg. RMSE values for Weighted Average')
+ax1.plot(rmse_group.index, rmse_group['rmse_mean'].values, label='Valor Médio do RMSE para Média ')
+ax1.plot(rmse_group.index, rmse_group['rmse_median'].values, label='Valor Médio do RMSE para Mediana')
+ax1.plot(rmse_group.index, rmse_group['rmse_fi_avg'].values, label='Valor Médio do RMSE para Média Ponderada')
 ax1.grid()
 ax1.set_facecolor('#E9ECEF')
-ax1.set_xlabel('Number of Models in Ensemble')
-ax1.set_ylabel('RMSE Value')
+ax1.set_xlabel('Número de Modelos Combinados')
+ax1.set_ylabel('Valor RMSE')
 ax1.legend()
 plt.show()
 ```
@@ -883,25 +929,25 @@ plt.show()
 #| layout-nrow: 2
 
 fig, ax = plt.subplots()
-ax.plot(smape_group.index, smape_group['smape_mean'].values, label='Avg. SMAPE values for Mean')
-ax.plot(smape_group.index, smape_group['smape_median'].values, label='Avg. SMAPE values for Median')
-ax.plot(smape_group.index, smape_group['smape_fi_avg'].values, label='Avg. SMAPE values for Weighted Average')
-ax.plot(smape_group.index, smape_group['smape_stack_svr'].values, label='Avg. SMAPE values for SVR-Stacking')
+ax.plot(smape_group.index, smape_group['smape_mean'].values, label='Valor Médio do SMAPE para Média')
+ax.plot(smape_group.index, smape_group['smape_median'].values, label='Valor Médio do SMAPE para Mediana')
+ax.plot(smape_group.index, smape_group['smape_fi_avg'].values, label='Valor Médio do SMAPE para Média Ponderada')
+ax.plot(smape_group.index, smape_group['smape_stack_svr'].values, label='Valor Médio do SMAPE para SVR-Stacking')
 ax.grid()
 ax.set_facecolor('#E9ECEF')
-ax.set_xlabel('Number of Models in Ensemble')
-ax.set_ylabel('SMAPE Value')
+ax.set_xlabel('Número de Modelos Combinados')
+ax.set_ylabel('Valor SMAPE')
 ax.legend()
 plt.show()
 
 fig1, ax1 = plt.subplots()
-ax1.plot(smape_group.index, smape_group['smape_mean'].values, label='Avg. SMAPE values for Mean')
-ax1.plot(smape_group.index, smape_group['smape_median'].values, label='Avg. SMAPE values for Median')
-ax1.plot(smape_group.index, smape_group['smape_fi_avg'].values, label='Avg. SMAPE values for Weighted Average')
+ax1.plot(smape_group.index, smape_group['smape_mean'].values, label='Valor Médio do SMAPE para Média')
+ax1.plot(smape_group.index, smape_group['smape_median'].values, label='Valor Médio do SMAPE para Mediana')
+ax1.plot(smape_group.index, smape_group['smape_fi_avg'].values, label='Valor Médio do SMAPE para Média Ponderada')
 ax1.grid()
 ax1.set_facecolor('#E9ECEF')
-ax1.set_xlabel('Number of Models in Ensemble')
-ax1.set_ylabel('SMAPE Value')
+ax1.set_xlabel('Número de Modelos Combinados')
+ax1.set_ylabel('Valor SMAPE')
 ax1.legend()
 plt.show()
 ```
@@ -913,7 +959,7 @@ plt.show()
 #| fig-cap: "Boxplot for mean RMSE value of all combinators."
 
 fig, ax =  plt.subplots(figsize=(12,8))
-ax.boxplot(rmse_group.loc[2:,:],tick_labels=['Mean', 'Median', 'Weighted Average', 'SVR-Stacking'])
+ax.boxplot(rmse_group.loc[2:,:],tick_labels=['Média Simples', 'Mediana', 'Média Ponderada', 'SVR-Stacking'])
 ax.set_facecolor('#E9ECEF')
 ax.set_ylabel('RMSE')
 plt.show()
@@ -924,7 +970,7 @@ plt.show()
 #| fig-cap: "Boxplot for mean SMAPE value of all combinators."
 
 fig, ax =  plt.subplots(figsize=(12,8))
-ax.boxplot(smape_group.loc[2:,:],tick_labels=['Mean', 'Median', 'Weighted Average', 'SVR-Stacking'])
+ax.boxplot(smape_group.loc[2:,:],tick_labels=['Média Simples', 'Mediana', 'Média Ponderada', 'SVR-Stacking'])
 ax.set_facecolor('#E9ECEF')
 ax.set_ylabel('SMAPE')
 plt.show()
@@ -936,7 +982,7 @@ plt.show()
 #| fig-cap: "Boxplot for mean RMSE value of mean, weigthed mean and median."
 
 fig, ax =  plt.subplots(figsize=(12,8))
-ax.boxplot(rmse_group.loc[2:,['rmse_mean','rmse_median','rmse_fi_avg']],tick_labels=['Mean', 'Median', 'Weighted Average'])
+ax.boxplot(rmse_group.loc[2:,['rmse_mean','rmse_median','rmse_fi_avg']],tick_labels=['Média Simples', 'Mediana', 'Média Ponderada'])
 ax.set_facecolor('#E9ECEF')
 ax.set_ylabel('RMSE')
 plt.show()
@@ -947,7 +993,7 @@ plt.show()
 #| fig-cap: "Boxplot for mean SMAPE value of mean, weigthed mean and median."
 
 fig, ax =  plt.subplots(figsize=(12,8))
-ax.boxplot(smape_group.loc[2:,['smape_mean','smape_median','smape_fi_avg']],tick_labels=['Mean', 'Median', 'Weighted Average'])
+ax.boxplot(smape_group.loc[2:,['smape_mean','smape_median','smape_fi_avg']],tick_labels=['Média Simples', 'Mediana', 'Média Ponderada'])
 ax.set_facecolor('#E9ECEF')
 ax.set_ylabel('SMAPE')
 plt.show()
@@ -998,12 +1044,12 @@ rmse_group_std
 fig, ax = plt.subplots()
 ax.set_facecolor('#E9ECEF')
 ax.grid()
-ax.plot(rmse_group_std.index, rmse_group_std['rmse_mean'].values, label='STD RMSE of Mean')
-ax.plot(rmse_group_std.index, rmse_group_std['rmse_median'].values, label='STD RMSE of Median')
-ax.plot(rmse_group_std.index, rmse_group_std['rmse_fi_avg'].values, label='STD RMSE of Weighted Average')
-ax.plot(rmse_group_std.index, rmse_group_std['rmse_stack_svr'].values, label='STD RMSE of SVR-Stacking')
-ax.set_xlabel('Number of models')
-ax.set_ylabel('STD RMSE')
+ax.plot(rmse_group_std.index, rmse_group_std['rmse_mean'].values, label='Desvio Padrão do RMSE para Média')
+ax.plot(rmse_group_std.index, rmse_group_std['rmse_median'].values, label='Desvio Padrão do RMSE para Mediana')
+ax.plot(rmse_group_std.index, rmse_group_std['rmse_fi_avg'].values, label='Desvio Padrão do RMSE para Média Ponderada')
+ax.plot(rmse_group_std.index, rmse_group_std['rmse_stack_svr'].values, label='Desvio Padrão do RMSE para SVR-Stacking')
+ax.set_xlabel('Número de Modelos')
+ax.set_ylabel('Desvio Padrão RMSE')
 ax.legend()
 plt.show()
 ```
@@ -1020,12 +1066,12 @@ smape_group_std
 fig, ax = plt.subplots()
 ax.set_facecolor('#E9ECEF')
 ax.grid()
-ax.plot(smape_group_std.index, smape_group_std['smape_mean'].values, label='STD SMAPE of Mean')
-ax.plot(smape_group_std.index, smape_group_std['smape_median'].values, label='STD SMAPE of Median')
-ax.plot(smape_group_std.index, smape_group_std['smape_fi_avg'].values, label='STD SMAPE of Weighted Average')
-ax.plot(smape_group_std.index, smape_group_std['smape_stack_svr'].values, label='STD SMAPE of SVR-Stacking')
-ax.set_xlabel('Number of models')
-ax.set_ylabel('STD SMAPE')
+ax.plot(smape_group_std.index, smape_group_std['smape_mean'].values, label='Desvio Padrão SMAPE para Média')
+ax.plot(smape_group_std.index, smape_group_std['smape_median'].values, label='Desvio Padrão do SMAPE para Mediana')
+ax.plot(smape_group_std.index, smape_group_std['smape_fi_avg'].values, label='Desvio Padrão do SMAPE para Média Ponderada')
+ax.plot(smape_group_std.index, smape_group_std['smape_stack_svr'].values, label='Desvio Padrão do SMAPE para SVR-Stacking')
+ax.set_xlabel('Número de Modelos')
+ax.set_ylabel('Desvio Padrão SMAPE')
 ax.legend()
 plt.show()
 ```
@@ -1041,10 +1087,10 @@ rmse.groupby(['n_models'])[['rmse_mean','rmse_median','rmse_fi_avg','rmse_stack_
 Após o teste de Friedman --- o qual verifica se há diferenças entre os métodos --- com significância de 5%, foi possível rejeitar a hipótese nula para ambas métricas, o *post hoc* de Nemenyi idenficou o nível de diferença entre as populações, baseda na distância crítica CD de 0.303 para a meétrics RMSE e SMAPE, há evidências que corroboboram com a afirmação de que método WAFI é mais acurado que os demais. Os gráficos @fig-cd mostram o *ranking* dos modelos.
 
 ```{python}
-dc_rmse = pd.DataFrame(mean_rmse_series_models.loc[(slice(None) , slice(2,9)) , :].values, columns=["Mean","Median","WAFI", "SVR Stack"])
+dc_rmse = pd.DataFrame(mean_rmse_series_models.loc[(slice(None) , slice(2,9)) , :].values, columns=['Média Simples', 'Mediana', 'Média Ponderada', "SVR-Stacking"])
 rmse_result = autorank(dc_rmse, alpha=0.05, verbose=False, order='ascending')
 
-dc_smape = pd.DataFrame(mean_smape_series_models.loc[(slice(None) , slice(2,9)) , :].values, columns=["Mean","Median","WAFI", "SVR Stack"])
+dc_smape = pd.DataFrame(mean_smape_series_models.loc[(slice(None) , slice(2,9)) , :].values, columns=['Média Simples', 'Mediana', 'Média Ponderada', "SVR Stacking"])
 smape_result = autorank(dc_smape, alpha=0.05, verbose=False, order='ascending')
 ```
 
