@@ -420,9 +420,9 @@ rmse_m100 = mean_rmse_series_models.loc['M100',:]
 rmse_m100
 ```
 
-Semelhante às outras séries, os resultados de média simples e média ponderada foram os mais acurádos, e quanto mais modelos são acrescentados, o valor do RMSE e SMAPE --- em média --- cai. A média ponderada por *features importances* ficando com o valor de 594.568 para a métrica RMSE  e 9,116 para SMAPE. 
+Semelhante às outras séries, os resultados de média simples e média ponderada foram os mais acurádos, e quanto mais modelos são acrescentados, o valor do RMSE e SMAPE --- em média --- cai. A média ponderada por *features importances* ficou com o valor de 594,56 para métrica RMSE e 9,116 para SMAPE. 
 
-Com relação à média simples, houve melhora contínua ao passo que mais modelos são acrescendados. Nota-se também que há uma lacuna acentuada entre as curvas, diferentemente das séries analisadas, indicando que a média ponderada conseguiu atriuir pesos significados aos métodos e consequentemente mais poder preditivo aos *ensembles*. 
+Com relação à média simples, houve melhora contínua ao passo que mais modelos são acrescendados. E desta vez foi a combinação mais acurada para a série N1501. Seus valores médios de erros foram 586,22 e 9,018 para RMSE e SMAPE. Nota-se também que há uma lacuna acentuada entre as curvas, diferentemente das séries analisadas, indicando que a média ponderada conseguiu não atriuir pesos significados aos métodos e consequentemente não gerou mais poder preditivo aos *ensembles* quando comparada à média simples. 
 
 ```{python}
 #| label: tbl-smape_mean_n1501
